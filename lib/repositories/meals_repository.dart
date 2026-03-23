@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/meal.dart';
 import 'dart:io';
-import 'dart:convert'; // <--- ВАЖЛИВО: Для кодування Base64
+import 'dart:convert';
 
 abstract class MealsRepository {
   Stream<List<Meal>> getMealsStream();
@@ -15,7 +15,6 @@ abstract class MealsRepository {
 class FirestoreMealsRepository implements MealsRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // FirebaseStorage більше не потрібен!
 
   CollectionReference _getMealsCollection() {
     final user = _auth.currentUser;
@@ -61,10 +60,8 @@ class FirestoreMealsRepository implements MealsRepository {
 
   @override
   Future<String?> uploadMealImage(File imageFile) async {
-    // ЗАМІСТЬ ЗАВАНТАЖЕННЯ В ХМАРУ — КОДУЄМО В РЯДОК
     try {
       final bytes = await imageFile.readAsBytes();
-      // Повертаємо рядок Base64
       return base64Encode(bytes);
     } catch (e) {
       print('Помилка конвертації фото: $e');

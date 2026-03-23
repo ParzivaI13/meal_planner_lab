@@ -19,12 +19,10 @@ class MealDetailsScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF28a745),
         foregroundColor: Colors.white,
         actions: [
-          // --- КНОПКА РЕДАГУВАННЯ ---
           IconButton(
             icon: const Icon(Icons.edit),
             tooltip: 'Редагувати',
             onPressed: () async {
-              // Відкриваємо екран додавання в режимі редагування (передаємо mealToEdit)
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -32,25 +30,21 @@ class MealDetailsScreen extends StatelessWidget {
                 ),
               );
 
-              // Якщо повернувся результат (користувач натиснув "Зберегти")
               if (result != null && result is Map) {
                 final updatedMeal = result['meal'] as Meal;
                 final newImage = result['image'] as File?;
 
                 if (context.mounted) {
-                  // Викликаємо оновлення в базі даних через State
                   await context.read<MealState>().updateMeal(
                         updatedMeal, 
                         newImageFile: newImage
                       );
                   
-                  // Повертаємось назад до списку, щоб дані оновились
                   Navigator.pop(context);
                 }
               }
             },
           ),
-          // ---------------------------
         ],
       ),
       body: SingleChildScrollView(
@@ -58,7 +52,6 @@ class MealDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Блок відображення фото
             if (meal.imageUrl != null && meal.imageUrl!.isNotEmpty)
               Container(
                 width: double.infinity,
@@ -66,11 +59,9 @@ class MealDetailsScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  // Тут ми не можемо використати DecorationImage напряму з віджетом Image.memory
-                  // Тому трохи змінимо підхід:
                 ),
-                clipBehavior: Clip.hardEdge, // Обрізаємо краї
-                child: _buildImage(meal.imageUrl!), // Використовуємо той самий метод
+                clipBehavior: Clip.hardEdge,
+                child: _buildImage(meal.imageUrl!),
               ),
             
             Text(

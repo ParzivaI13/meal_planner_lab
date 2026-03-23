@@ -57,7 +57,6 @@ class MealCard extends StatelessWidget {
                 ],
               ),
             ),
-            // --- ЗМІНИ ТУТ ---
             Container(
               width: 60,
               height: 60,
@@ -65,17 +64,15 @@ class MealCard extends StatelessWidget {
                 color: const Color(0xFFE9ECEF),
                 borderRadius: BorderRadius.circular(8),
               ),
-              // ЛОГІКА ВІДОБРАЖЕННЯ
               child: meal.imageUrl != null && meal.imageUrl!.isNotEmpty
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: _buildImage(meal.imageUrl!), // Викликаємо допоміжний метод
+                      child: _buildImage(meal.imageUrl!),
                     )
                   : const Center(
                       child: Text('📸', style: TextStyle(fontSize: 24)),
                     ),
             ),
-            // ----------------
           ],
         ),
       ),
@@ -84,7 +81,6 @@ class MealCard extends StatelessWidget {
 
   Widget _buildImage(String imageSource) {
     try {
-      // Якщо це Base64 (довгий рядок без http)
       if (!imageSource.startsWith('http')) {
         return Image.memory(
           base64Decode(imageSource),
@@ -92,7 +88,6 @@ class MealCard extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
         );
       } 
-      // Якщо раптом там старе посилання http (для сумісності)
       else {
         return Image.network(
           imageSource,

@@ -18,10 +18,9 @@ class _AddMealScreenState extends State<AddMealScreen> {
   final _nameController = TextEditingController();
   final _ingredientsController = TextEditingController();
   final _caloriesController = TextEditingController();
-  File? _selectedImage; // Змінна для збереження вибраного файлу
-  bool _isSaving = false; // Для індикатора завантаження
+  File? _selectedImage;
+  bool _isSaving = false;
 
-  // Метод вибору фото
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -64,17 +63,16 @@ class _AddMealScreenState extends State<AddMealScreen> {
     };
 
     final Meal meal = Meal(
-      id: widget.mealToEdit?.id ?? '', // Якщо редагуємо, зберігаємо ID
+      id: widget.mealToEdit?.id ?? '',
       time: '${selectedMealType.toUpperCase()} • ${timeMap[selectedMealType]}',
       name: _nameController.text,
       calories: '${_caloriesController.text} ккал',
       ingredients: _ingredientsController.text.trim(),
       imageUrl: widget
           .mealToEdit
-          ?.imageUrl, // Передаємо старий URL, він оновиться в State якщо треба
+          ?.imageUrl,
     );
 
-    // Повертаємо {'meal': meal, 'image': _selectedImage}
     Navigator.pop(context, {'meal': meal, 'image': _selectedImage});
   }
 
@@ -87,15 +85,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
       _caloriesController.text = meal.calories.replaceAll(
         ' ккал',
         '',
-      ); // Чистимо текст
+      );
       _ingredientsController.text = meal.ingredients;
 
-      // Парсимо тип прийому їжі з рядка "СНІДАНОК • 8:00"
       final typePart = meal.time.split('•').first.trim();
-      // Приводимо до формату Dropdown (Перша велика, інші малі)
-      // Або просто зробимо switch/case, якщо формати відрізняються.
-      // Для простоти припустимо, що в Dropdown значення 'Сніданок', а в базі 'СНІДАНОК'
-      // Спробуємо знайти відповідність:
       if (typePart.contains('СНІД'))
         selectedMealType = 'Сніданок';
       else if (typePart.contains('ОБІД'))

@@ -47,8 +47,6 @@ class _MainScreenState extends State<MainScreen> {
                   final meal = result['meal'] as Meal;
                   final image = result['image'] as File?;
 
-                  // Викликаємо метод додавання в State
-                  // Використовуємо listen: false, бо ми в callback-у
                   context.read<MealState>().addMeal(meal, imageFile: image);
                 }
               },

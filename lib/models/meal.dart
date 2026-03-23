@@ -1,14 +1,14 @@
 class Meal {
-  final String id; // Додаємо ID для роботи з БД
+  final String id;
   final String time;
   final String name;
   final String
-  calories; // Зберігаємо як стрічку для UI "500 ккал", але в БД будемо чистити
+  calories;
   final String ingredients;
-  final String? imageUrl; // Для майбутнього фото
+  final String? imageUrl;
 
   Meal({
-    this.id = '', // По замовчуванню пустий, присвоїться з Firebase
+    this.id = '',
     required this.time,
     required this.name,
     required this.calories,
@@ -16,7 +16,6 @@ class Meal {
     this.imageUrl,
   });
 
-  // Конвертація в Map для Firestore
   Map<String, dynamic> toFirestore() {
     return {
       'time': time,
@@ -25,11 +24,10 @@ class Meal {
       'ingredients': ingredients,
       'imageUrl': imageUrl,
       'createdAt': DateTime.now()
-          .toIso8601String(), // Для сортування за датою створення
+          .toIso8601String(),
     };
   }
 
-  // Створення об'єкта з документу Firestore
   factory Meal.fromFirestore(Map<String, dynamic> data, String docId) {
     return Meal(
       id: docId,
@@ -41,27 +39,5 @@ class Meal {
     );
   }
 
-  // Старі методи toJson/fromJson можна залишити або видалити, якщо не плануєш кешувати локально json-ом
   Map<String, dynamic> toJson() => toFirestore();
 }
-
-  // для конвертації об'єкта Meal у Map
- /* Map<String, dynamic> toJson() {
-    return {
-      'time': time,
-      'name': name,
-      'calories': calories,
-      'ingredients': ingredients,
-    };
-  }
-
-  // конструктор для створення об'єкта Meal з Map
-  factory Meal.fromJson(Map<String, dynamic> json) {
-    return Meal(
-      time: json['time'] as String,
-      name: json['name'] as String,
-      calories: json['calories'] as String,
-      ingredients: json['ingredients'] as String? ?? '',
-    );
-  }
-}*/

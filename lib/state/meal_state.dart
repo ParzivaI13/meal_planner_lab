@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart'; // Додали цей імпорт
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../models/meal.dart';
 import '../models/sort_type.dart';
 import '../repositories/meals_repository.dart';
 
-// Допоміжні функції (залишаються без змін)
 int _parseTime(String time) {
   try {
     final timeStr = time.split('•').last.trim();
@@ -28,10 +27,8 @@ class MealState extends ChangeNotifier {
   
   List<Meal> _meals = [];
   
-  // Підписка на дані з Firestore
   StreamSubscription<List<Meal>>? _mealsSubscription;
   
-  // Підписка на статус авторизації (логін/логаут)
   StreamSubscription<User?>? _authSubscription; 
 
   SortType _currentSort = SortType.none;
@@ -41,35 +38,28 @@ class MealState extends ChangeNotifier {
   SortType get currentSort => _currentSort;
 
   MealState() {
-    // Замість прямго виклику стріму, слухаємо Auth
     _initAuthListener();
   }
 
-  // --- ГОЛОВНА ЗМІНА ТУТ ---
   void _initAuthListener() {
-    // Слухаємо зміни стану авторизації
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        // Якщо юзер вийшов: очищуємо список і скасовуємо підписку на страви
         _meals = [];
         _mealsSubscription?.cancel();
         _mealsSubscription = null;
         notifyListeners();
       } else {
-        // Якщо юзер зайшов (або змінився): запускаємо стрім для цього юзера
         _initMealsStream();
       }
     });
   }
 
   void _initMealsStream() {
-    // Спочатку скасовуємо стару підписку, якщо вона була
     _mealsSubscription?.cancel();
     
     _isLoading = true;
     notifyListeners();
 
-    // Підписуємося на нову
     _mealsSubscription = _repository.getMealsStream().listen((mealsData) {
       _meals = mealsData;
       _isLoading = false;
@@ -84,12 +74,10 @@ class MealState extends ChangeNotifier {
   @override
   void dispose() {
     _mealsSubscription?.cancel();
-    _authSubscription?.cancel(); // Не забуваємо відписатися від Auth
+    _authSubscription?.cancel();
     super.dispose();
   }
-  // -------------------------
 
-  // Геттер з сортуванням
   List<Meal> get meals {
     final List<Meal> list = List.from(_meals);
 
@@ -158,13 +146,10 @@ class MealState extends ChangeNotifier {
       );
 
       await _repository.addMeal(newMeal);
-      // Тут не треба викликати initMealsStream, бо listen() спрацює автоматично
       
     } catch (e) {
       print("Помилка додавання: $e");
     } finally {
-      // Можна не ставити isLoading = false тут, бо стрім оновиться і сам зніме лоадер,
-      // але для надійності можна залишити.
       _isLoading = false; 
       notifyListeners(); 
     }
@@ -179,16 +164,14 @@ class MealState extends ChangeNotifier {
     notifyListeners();
 
     try {
-      String? imageUrl = meal.imageUrl; // За замовчуванням залишаємо старе фото
+      String? imageUrl = meal.imageUrl;
 
-      // Якщо користувач вибрав нове фото, вантажимо його
       if (newImageFile != null) {
         imageUrl = await _repository.uploadMealImage(newImageFile);
       }
 
-      // Створюємо оновлений об'єкт (зберігаємо старий ID!)
       final updatedMeal = Meal(
-        id: meal.id, // ВАЖЛИВО: ID не змінюється
+        id: meal.id,
         time: meal.time,
         name: meal.name,
         calories: meal.calories,
