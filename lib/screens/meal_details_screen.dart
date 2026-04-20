@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Потрібно для доступу до State
-import 'dart:io'; // Потрібно для роботи з файлами (File)
+import 'package:provider/provider.dart'; 
+import 'dart:io'; 
 import '../models/meal.dart';
 import '../state/meal_state.dart';
-import 'add_meal_screen.dart'; // Потрібно для навігації на екран редагування
+import 'add_meal_screen.dart'; 
 import 'dart:convert';
 
 class MealDetailsScreen extends StatelessWidget {
@@ -82,13 +82,26 @@ class MealDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            
             _buildInfoCard(
               icon: Icons.local_fire_department,
               title: 'Калорійність',
               value: meal.calories,
               color: const Color(0xFFDC3545),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
+
+            // Блок макронутрієнтів
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildMacroBadge('Білки', meal.protein, const Color(0xFF28a745)),
+                _buildMacroBadge('Жири', meal.fat, const Color(0xFFFFC107)),
+                _buildMacroBadge('Вуглеводи', meal.carbs, const Color(0xFF17A2B8)),
+              ],
+            ),
+            
+            const SizedBox(height: 25),
             const Text(
               'Інгредієнти:',
               style: TextStyle(
@@ -112,6 +125,38 @@ class MealDetailsScreen extends StatelessWidget {
       ),
     );
     
+  }
+
+  Widget _buildMacroBadge(String title, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color.withOpacity(0.8),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildInfoCard({

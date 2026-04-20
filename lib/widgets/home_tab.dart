@@ -18,6 +18,17 @@ class HomeTab extends StatelessWidget {
     });
   }
 
+  String _getFormattedDate(DateTime date) {
+    const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+    final now = DateTime.now();
+    final dateStr = '${date.day} ${months[date.month - 1]}';
+    
+    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+      return 'Сьогодні, $dateStr';
+    }
+    return dateStr;
+  }
+
   Widget _buildSortButton(
     BuildContext context,
     String label,
@@ -123,13 +134,14 @@ class HomeTab extends StatelessWidget {
                   ],
                 ),
               ),
+              // ...
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
                     Center(
                       child: Text(
-                        'Сьогодні, ${DateTime.now().day} жовтня',
+                        _getFormattedDate(mealState.selectedDate), // ВИКЛИКАЄМО НОВИЙ МЕТОД
                         style: const TextStyle(
                           fontSize: 18,
                           color: Color(0xFF495057),

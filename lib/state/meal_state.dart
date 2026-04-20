@@ -26,19 +26,24 @@ class MealState extends ChangeNotifier {
   final MealsRepository _repository = FirestoreMealsRepository();
   
   List<Meal> _meals = [];
-  
   StreamSubscription<List<Meal>>? _mealsSubscription;
-  
   StreamSubscription<User?>? _authSubscription; 
 
   SortType _currentSort = SortType.none;
   bool _isLoading = false;
+  DateTime _selectedDate = DateTime.now();
 
   bool get isLoading => _isLoading;
   SortType get currentSort => _currentSort;
+  DateTime get selectedDate => _selectedDate; 
 
   MealState() {
     _initAuthListener();
+  }
+
+  void setSelectedDate(DateTime date) {
+    _selectedDate = date;
+    notifyListeners();
   }
 
   void _initAuthListener() {
@@ -56,7 +61,6 @@ class MealState extends ChangeNotifier {
 
   void _initMealsStream() {
     _mealsSubscription?.cancel();
-    
     _isLoading = true;
     notifyListeners();
 
@@ -78,8 +82,14 @@ class MealState extends ChangeNotifier {
     super.dispose();
   }
 
+  List<Meal> get allMeals => _meals; 
+
   List<Meal> get meals {
-    final List<Meal> list = List.from(_meals);
+    final List<Meal> list = _meals.where((meal) {
+      return meal.date.year == _selectedDate.year &&
+             meal.date.month == _selectedDate.month &&
+             meal.date.day == _selectedDate.day;
+    }).toList();
 
     if (_currentSort == SortType.timeAsc || _currentSort == SortType.timeDesc) {
       list.sort((a, b) {
@@ -138,9 +148,13 @@ class MealState extends ChangeNotifier {
       }
 
       final newMeal = Meal(
+        date: meal.date, 
         time: meal.time,
         name: meal.name,
         calories: meal.calories,
+        protein: meal.protein,
+        fat: meal.fat,
+        carbs: meal.carbs,
         ingredients: meal.ingredients,
         imageUrl: imageUrl,
       );
@@ -172,9 +186,13 @@ class MealState extends ChangeNotifier {
 
       final updatedMeal = Meal(
         id: meal.id,
+        date: meal.date, 
         time: meal.time,
         name: meal.name,
         calories: meal.calories,
+        protein: meal.protein,
+        fat: meal.fat,
+        carbs: meal.carbs,
         ingredients: meal.ingredients,
         imageUrl: imageUrl,
       );

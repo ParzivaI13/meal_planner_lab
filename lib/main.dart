@@ -7,12 +7,15 @@ import 'firebase_options.dart';
 import 'auth_gate.dart';
 import 'package:provider/provider.dart'; 
 import 'state/meal_state.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await NotificationService().init();
 
  await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.playIntegrity,

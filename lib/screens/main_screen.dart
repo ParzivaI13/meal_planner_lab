@@ -32,22 +32,25 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       body: screens[_selectedIndex],
-      floatingActionButton: _selectedIndex == 0
+        floatingActionButton: _selectedIndex == 0 || _selectedIndex == 1 // Додаємо на таб тижня теж
           ? FloatingActionButton(
               onPressed: () async {
-                // Отримуємо результат як Map
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddMealScreen(),
+                    builder: (context) => AddMealScreen(
+                      // Передаємо обрану дату з MealState
+                      initialDate: context.read<MealState>().selectedDate, 
+                    ),
                   ),
                 );
 
                 if (result != null && result is Map) {
                   final meal = result['meal'] as Meal;
                   final image = result['image'] as File?;
-
-                  context.read<MealState>().addMeal(meal, imageFile: image);
+                  if (context.mounted) {
+                     context.read<MealState>().addMeal(meal, imageFile: image);
+                  }
                 }
               },
               backgroundColor: const Color(0xFF28a745),

@@ -46,6 +46,9 @@ dependencies:
   cloud_firestore: ^6.1.1  # Для бази даних
   firebase_storage: ^13.0.5 # Для фото
   image_picker: ^1.1.0     # Для вибору фото з галереї
+  flutter_local_notifications: ^20.1.0
+  timezone: ^0.10.1
+  flutter_timezone: ^5.0.2
 
 dev_dependencies:
   flutter_test:
